@@ -1,0 +1,26 @@
+* text=auto eol=lf
+
+# The bundled faces are binary. `text=auto` above would classify them as such
+# on its own, because each one has a NUL in its first bytes, but each also
+# carries twenty to thirty CRLF pairs that `eol=lf` would rewrite, so the font
+# surviving a commit would rest on a heuristic. It does not have to.
+*.ttf   binary
+*.otf   binary
+*.woff  binary
+*.woff2 binary
+
+*.blade.php diff=html
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
+
+/.github          export-ignore
+/.gitattributes   export-ignore
+/.gitignore       export-ignore
+/phpunit.xml      export-ignore
+/docs             export-ignore
+/examples         export-ignore
+/tests            export-ignore
+/phpstan.neon     export-ignore
+/phpstan-baseline.neon export-ignore

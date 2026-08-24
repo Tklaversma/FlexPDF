@@ -1,0 +1,120 @@
+name: run-tests
+
+on:
+  push:
+    paths:
+      - '**.php'
+      - '.github/workflows/run-tests.yml'
+      - 'phpunit.xml'
+      - 'composer.json'
+  pull_request:
+    paths:
+      - '**.php'
+      - '.github/workflows/run-tests.yml'
+      - 'phpunit.xml'
+      - 'composer.json'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: true
+      matrix:
+        laravel: ['11.*', '12.*', '13.*']
+        stability: [prefer-lowest, prefer-stable]
+        include:
+          - laravel: '11.*'
+            testbench: '9.*'
+          - laravel: '12.*'
+            testbench: '10.*'
+          - laravel: '13.*'
+            testbench: '11.*'
+
+    name: L${{ matrix.laravel }} - ${{ matrix.stability }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: dom, gd, zlib, mbstring, curl, libxml, zip, fileinfo
+          coverage: none
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+
+      - name: Execute tests
+        run: vendor/bin/pest --ci
+
+  # The engine suites verify their PDF output by parsing it back with Python
+  # and need a DejaVu family on disk.
+  engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    name: engine
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: dom, gd, zlib, mbstring
+          coverage: none
+
+      - name: Install DejaVu fonts
+        run: sudo apt-get update && sudo apt-get install -y fonts-dejavu-core
+
+      - name: Install the PDF probe stack
+        run: pip install pypdf pypdfium2 numpy pillow fonttools
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction
+
+      - name: Execute the engine suites
+        run: composer test-engine
+
+  # The fuzzer has found more bugs than all the handwritten tests combined.
+  # The seed rotates with the run number, so every push covers new ground and
+  # any failure is reproducible from the run number alone.
+  fuzz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    name: fuzz
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: dom, gd, zlib, mbstring
+          coverage: none
+
+      - name: Install DejaVu fonts
+        run: sudo apt-get update && sudo apt-get install -y fonts-dejavu-core
+
+      - name: Install the PDF probe stack
+        run: pip install pypdf pypdfium2 numpy pillow fonttools
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction
+
+      - name: Fuzz layout invariants
+        run: php tests/Engine/fuzz.php ${{ github.run_number }} 400

@@ -1,0 +1,55 @@
+name: Bug report
+description: Something renders wrong, throws, or does not match what a browser does
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. **The single most useful thing you can give us
+        is a small HTML sample that shows the problem.** If you can trim it
+        down to a handful of elements, the fix usually follows quickly.
+  - type: textarea
+    id: sample
+    attributes:
+      label: HTML + CSS that shows the problem
+      description: A minimal, self-contained sample. Trim everything that is not needed to reproduce it.
+      render: html
+      placeholder: |
+        <style>
+          .box { display: flex; gap: 8pt }
+        </style>
+        <div class="box">...</div>
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: How you rendered it
+      description: The FlexPDF call, including page size, margins, fonts and any other settings.
+      render: php
+      placeholder: |
+        Pdf::html($html)->page('a4')->margins(40)->save('out.pdf');
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: What it should look like. A screenshot of the same HTML in a browser's print preview is ideal.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What FlexPDF produced
+      description: What the PDF shows instead, or the full exception message. Attach the PDF or a screenshot if you can.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: FlexPDF, PHP and Laravel versions.
+      placeholder: flexpdf 0.x.y, PHP 8.4.z, Laravel 13.x
+    validations:
+      required: true

@@ -1,0 +1,14 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
+        - config
+    excludePaths:
+        # Imported prototype code. Analysing it produces hundreds of findings
+        # that would drown the package's own, and reformatting it to satisfy
+        # them would destroy the bisectability of a 9,000-line import.
+        - src/Engine
+    tmpDir: build/phpstan

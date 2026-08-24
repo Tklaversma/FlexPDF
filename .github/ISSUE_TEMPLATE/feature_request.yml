@@ -1,0 +1,33 @@
+name: Feature request
+description: A CSS property, PDF capability or API you are missing
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check [ROADMAP.md](../../blob/main/ROADMAP.md) first: it lists what is
+        already planned, and what happens today until it lands. **A real
+        document that needs the feature is exactly what moves an item up the
+        list**, so tell us about yours.
+  - type: input
+    id: feature
+    attributes:
+      label: What is missing
+      description: The CSS property, PDF capability or API call.
+      placeholder: radial-gradient(), subgrid, a page-mode option, ...
+    validations:
+      required: true
+  - type: textarea
+    id: need
+    attributes:
+      label: The document that needs it
+      description: What you are building and what the missing piece does in it. A small HTML sample of the layout you are trying to get is perfect.
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: What you do today
+      description: The workaround you use now, if there is one.
+    validations:
+      required: false
