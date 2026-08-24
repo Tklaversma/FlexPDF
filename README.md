@@ -210,6 +210,16 @@ $this->attachData(
 Not using Laravel? The engine has no Laravel dependency:
 `FlexPDF\Engine\Html::make($html)` exposes the same capabilities directly.
 
+## Examples
+
+[`examples/`](examples/) holds nine complete documents, each a Blade template
+plus the exact builder chain that renders it: an invoice, a bank statement, an
+annual report, a slide deck, a product catalog, a CSS showcase, a fillable form,
+a PDF/A-3 e-invoice with an attached XML, and an encrypted document. They run
+from a clone with `composer install && php examples/render.php`, and each one is
+meant to be copied into your app as a starting point. The
+[examples README](examples/README.md) says what every document shows.
+
 ## Page setup, headers and footers
 
 ```php

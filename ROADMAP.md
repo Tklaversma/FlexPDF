@@ -10,6 +10,7 @@ built when real documents ask for it
 | Coming | What happens today | Status |
 |---|---|---|
 | A stable 1.0 API | in beta, names may still shift | 🔨 up next |
+| A paragraph beside a float, when a page break follows later in the document | the paragraph lands below the float; wrap the section in `break-inside: avoid` until fixed | 🔨 up next |
 | Factur-X / ZUGFeRD XMP profile schema | the two big halves, PDF/A-3 and the XML attachment, already work | 🔨 up next |
 | Line wrapping per named `@page` width | the sheet size is right, text wraps at the document's width | 🔨 up next |
 | `radial-gradient()` | renders as no background | 📋 planned |

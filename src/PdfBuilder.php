@@ -186,6 +186,12 @@ class PdfBuilder
         return $this->fontReport;
     }
 
+    /** The markup this builder will render, for writing beside the PDF when debugging a template. */
+    public function markup(): string
+    {
+        return $this->html;
+    }
+
     /** @param string|array{0:float|int,1:float|int} $size */
     public function page(string|array $size, string $orientation = 'portrait'): static
     {

@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # Keeps the SHA-pinned actions in the workflows current. Pinning is only
+  # safe while something bumps the pins.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+
+  # The package's own dev dependencies (Pest, PHPStan, Pint, Testbench).
+  # Runtime dependencies are version ranges and are left to the user's app.
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

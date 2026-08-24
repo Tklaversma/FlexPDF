@@ -8,7 +8,7 @@
 /.venv
 /build
 /docs
-/examples/*.pdf
+/examples/output
 /node_modules
 /vendor
 
