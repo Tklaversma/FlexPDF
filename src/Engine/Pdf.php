@@ -247,8 +247,8 @@ final class Pdf
     /**
      * Where and how the document opens.
      *
-     * `$fit` is matched without regard to case, so a caller migrating off
-     * Dompdf can pass that library's own `fitH` spelling unchanged. A type
+     * `$fit` is matched without regard to case, so a caller can pass a
+     * lowercase `fitH` unchanged. A type
      * that needs coordinates gets them from `$args`, in the order PDF 32000-1
      * table 151 lists them, and a missing one is written as `null`, which the
      * spec defines as "leave this one as it is".

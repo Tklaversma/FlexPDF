@@ -15,4 +15,17 @@
 .phpunit.result.cache
 composer.lock
 
+# AI assistant files, instructions and scratch
 /CLAUDE.md
+/.claude
+/AGENTS.md
+/.ai
+/.cursor
+/.cursorrules
+/.windsurf
+/.windsurfrules
+/GEMINI.md
+/.gemini
+/.aider*
+/.codex
+/.github/copilot-instructions.md

@@ -392,8 +392,7 @@ final class Html
      *
      * `$fit` is one of the eight destination types of PDF 32000-1 table 151,
      * matched without regard to case: `Fit`, `FitH`, `FitV`, `FitR`, `FitB`,
-     * `FitBH`, `FitBV` and `XYZ`. Dompdf's own `set_default_view('fitH')`
-     * spelling therefore travels unchanged.
+     * `FitBH`, `FitBV` and `XYZ`, so a lowercase `fitH` travels unchanged.
      *
      * @param list<float> $args the coordinates the type needs, in the spec's order
      */

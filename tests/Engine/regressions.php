@@ -6561,9 +6561,8 @@ ok('a list item holding a sublist does not number from the sublist',
  * document that NAMED it did not: `font-family: 'DejaVu Sans'` missed the
  * registry, was recorded as a family that resolved to nothing, and fell back to
  * Helvetica. So the Latin either side of a Cyrillic word came out in a face the
- * page never asked for, in a declaration that named exactly one family. Dompdf
- * bundles this same file and answers to this same name, so it is also the
- * family a document being migrated off Dompdf already carries.
+ * page never asked for, in a declaration that named exactly one family, and
+ * a family a stylesheet written for another renderer may already carry.
  *
  * Chrome's answers are read off `ZD-font-fallback-percharacter.html` at
  * 400x600 with `build/probe/layout-reference.py`, and the four bundled files

@@ -177,7 +177,7 @@ it('writes the initial view the builder asked for', function () {
         ->and($bytes)->toContain('/PageMode /UseOutlines');
 });
 
-it('accepts dompdf\'s own spelling of a fit', function () {
+it('accepts a lowercase spelling of a fit', function () {
     $bytes = Pdf::html('<p>x</p>')->initialView('fitH', 1, [10.0])->output();
 
     expect($bytes)->toContain('/FitH 10');

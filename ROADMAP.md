@@ -16,7 +16,6 @@ built when real documents ask for it
 | `filter` (`grayscale()`, `blur()`, ...) | the declaration is dropped | 📋 planned |
 | `text-shadow` blur | the shadow is drawn sharp | 📋 planned |
 | Layer ordering for `@layer` | the rules apply, on their own specificity | 📋 planned |
-| A migration guide for dompdf projects | | 📋 planned |
 | Subgrid | the declaration is dropped | 💤 on request |
 | CJK (Chinese, Japanese, Korean) | not supported | 💤 on request |
 | Indic scripts, Thai, Khmer | not supported | 💤 on request |

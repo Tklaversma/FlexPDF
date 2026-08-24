@@ -341,9 +341,9 @@ class PdfBuilder
      *     ->initialView('FitH', 2, [280.0])    // page two, that y at the top
      *
      * $fit takes the eight destination types of PDF 32000-1 table 151 without
-     * regard to case: Fit, FitH, FitV, FitR, FitB, FitBH, FitBV and XYZ. A
-     * document migrating off Dompdf can pass that library's own `fitH`
-     * spelling unchanged. $args carries whatever coordinates the type needs,
+     * regard to case: Fit, FitH, FitV, FitR, FitB, FitBH, FitBV and XYZ, so a
+     * lowercase `fitH` is accepted unchanged. $args carries whatever
+     * coordinates the type needs,
      * in the spec's own order, and one left out is written as `null`, which
      * tells a reader to keep that axis as it found it.
      *

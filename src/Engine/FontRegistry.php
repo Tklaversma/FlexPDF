@@ -276,9 +276,9 @@ final class FontRegistry
      * it, and not before.
      *
      * `font-family: 'DejaVu Sans'` resolved to Helvetica until round 91, which
-     * is the wrong answer for a face the package ships in the same checkout.
-     * Dompdf bundles this face and answers to this name, so it is also the
-     * family name a document being migrated off Dompdf already carries.
+     * is the wrong answer for a face the package ships in the same checkout,
+     * and a family name a stylesheet written for another renderer may already
+     * carry.
      *
      * **Lazily, and only for this one name**, so that a document that never
      * mentions it neither parses 2.6 MB of font nor writes a byte differently.
