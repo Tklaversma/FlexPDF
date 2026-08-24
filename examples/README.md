@@ -54,11 +54,6 @@ that file is bootstrapping you will never write yourself.
   that reset for this reason.
 - **A block you never want split across pages gets `break-inside: avoid`.**
   The product cards, the payment block and the pull quote use it.
-- **The showcase's float section is wrapped in `break-inside: avoid` on
-  purpose.** Without it, a paragraph beside a float lands below the float
-  when a page break follows later in the document. That is an open engine
-  defect, listed in [ROADMAP.md](../ROADMAP.md); the wrapper is the
-  workaround until it is fixed.
 - **Inline `<svg>` is the easy way to draw a chart.** `linearGradient`,
   `path`, `polyline`, `polygon`, `text` and `opacity` all work, and the data
   can be written into the SVG from Blade like anywhere else.

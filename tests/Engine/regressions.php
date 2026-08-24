@@ -6751,5 +6751,97 @@ ok('CONTROL: the background of that child is still cut across the two pages',
     ($ivTallSpots['a1'] ?? []) === ['p1/268.000/4.000', 'p2/0.000/11.000'],
     implode(' ', $ivTallSpots['a1'] ?? ['none']));
 
+/*
+ * Round 92, defect IY: a paragraph beside a float pushed BELOW the float when a
+ * page break follows later in the document.
+ *
+ * `ZF-float-then-break.html` is the probe and the public examples found it, the
+ * same way the Duppie documents found IV. A heading, a 130pt box floated right,
+ * a paragraph long enough to wrap beside it, then a 600pt block whose only job
+ * is to force a further page. Layout puts the paragraph beside the float in
+ * every build. The Fragmenter's band walk placed the float, left the cursor at
+ * the float's bottom, and the paragraph's band, whose own top is the float's,
+ * advanced zero from there: one float height too low. A body that fits its
+ * page is emitted whole and never walked, which is why the same section was
+ * right in every partial build of the page and wrong in the whole document.
+ *
+ * Chrome's answers, printed from the probe at `@page { size: 400pt 300pt;
+ * margin: 20pt }` and read with `streamdump.py`. Chrome's own margin snaps to
+ * 20.25pt, so the engine's y is a quarter of a point from Chrome's by
+ * construction:
+ *
+ *   float box top        63.75 from the page top, 43.50 into the content box
+ *   paragraph first line 227.25 from the page bottom, its line box starting at
+ *                        the float's own top
+ *   pages                3
+ *
+ * The engine before the fix: paragraph first line 165.90, which is 227.50 less
+ * the float's 61.6pt, and 4 pages.
+ */
+function iyDocument(bool $tall, bool $kept): string
+{
+    $section = '<h2>Floats</h2>'
+        . '<div class="floatbox" id="f">This block floats right. The text beside it wraps around it, '
+        . 'with a real exclusion of the line boxes rather than a margin.</div>'
+        . '<div class="flowtext" id="t">A floated block takes space away from the line boxes beside it, '
+        . 'and the lines stay shorter for as long as the block is next to them. Once the text runs out '
+        . 'below the block, the lines return to the full width. That is the difference between a real '
+        . 'float and a block with a margin beside it: with a margin, every line stays short, including '
+        . 'the ones below the block. This paragraph is made long enough to show the difference, so the '
+        . 'first lines sit beside the block and the last lines run on below it across the full column '
+        . 'width of this page.</div>';
+
+    return '<style>*{box-sizing:border-box}html,body{margin:0;padding:0}'
+        . 'body{font-family:Helvetica;font-size:9pt;line-height:1.5}'
+        . 'h2{font-size:8pt;letter-spacing:1.8pt;text-transform:uppercase;color:#2f6f4e;'
+        . 'border-bottom:0.5pt solid #dbe6e0;padding-bottom:4pt;margin:18pt 0 9pt}'
+        . '.floatbox{float:right;width:130pt;background:#f5f9f7;padding:8pt;margin:0 0 6pt 10pt;font-size:7.6pt}'
+        . '.flowtext{font-size:8pt;text-align:justify;hyphens:auto}'
+        . '.keep{break-inside:avoid}</style>'
+        . ($kept ? '<div class="keep">' . $section . '</div>' : $section)
+        . ($tall ? '<div style="height:600pt;background:#eee">tall block that forces a second page</div>' : '');
+}
+
+/** @return array{0:int,1:array<string,list<string>>} pages, box spots by id */
+function iyPaginate(string $html): array
+{
+    $tree  = layout($html, 360.0, 260.0);
+    $pages = (new Fragmenter(260.0))->fragment($tree);
+    $spots = [];
+
+    foreach ($pages as $pi => $page) {
+        foreach ($page as $f) {
+            if (($f->node->anchorId ?? '') !== '') {
+                $spots[$f->node->anchorId][] = sprintf('p%d/%.3f/%.3f', $pi, $f->y, $f->h);
+            }
+        }
+    }
+
+    return [count($pages), $spots];
+}
+
+[$iyPages, $iySpots] = iyPaginate(iyDocument(true, false));
+
+ok('a paragraph beside a float starts where the float starts when a page break follows later',
+    ($iySpots['f'] ?? []) === ['p0/43.500/61.600'] && ($iySpots['t'] ?? []) === ['p0/43.500/96.000'],
+    sprintf('float %s, paragraph %s, Chrome puts both at 43.500',
+        implode(' ', $iySpots['f'] ?? ['none']), implode(' ', $iySpots['t'] ?? ['none'])));
+
+ok('and the document has Chrome\'s three pages rather than four',
+    $iyPages === 3,
+    sprintf('%d pages', $iyPages));
+
+[$iyNoTallPages, $iyNoTallSpots] = iyPaginate(iyDocument(false, false));
+
+ok('CONTROL, PASSES ON BOTH TREES: with no further page the body is emitted whole and the paragraph sits beside the float',
+    $iyNoTallPages === 1 && ($iyNoTallSpots['t'] ?? []) === ['p0/43.500/96.000'],
+    sprintf('%d pages, paragraph %s', $iyNoTallPages, implode(' ', $iyNoTallSpots['t'] ?? ['none'])));
+
+[$iyKeptPages, $iyKeptSpots] = iyPaginate(iyDocument(true, true));
+
+ok('CONTROL, PASSES ON BOTH TREES: the break-inside: avoid workaround the showcase carried gives the same answer',
+    $iyKeptPages === 3 && ($iyKeptSpots['t'] ?? []) === ['p0/43.500/96.000'],
+    sprintf('%d pages, paragraph %s', $iyKeptPages, implode(' ', $iyKeptSpots['t'] ?? ['none'])));
+
 printf("\n  %d passed, %d failed\n\n", $pass, $fail);
 exit($fail > 0 ? 1 : 0);

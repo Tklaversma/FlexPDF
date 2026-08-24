@@ -242,11 +242,6 @@
         justification to the right edge of every column.
     </div>
 
-    {{-- Wrapped in break-inside: avoid on purpose: without it the paragraph
-         lands below the float instead of beside it when a later page break
-         exists. That is an open engine defect (see ROADMAP.md), and this is
-         the workaround until it is fixed. --}}
-    <div class="keep">
     <h2>Floats</h2>
     <div class="floatbox">
         This block floats right. The text beside it wraps around it, with a real exclusion of the line
@@ -259,7 +254,6 @@
         margin, every line stays short, including the ones below the block. This paragraph is made long
         enough to show the difference, so the first lines sit beside the block and the last lines run on
         below it across the full column width of this page.
-    </div>
     </div>
 
     <h2>Effects</h2>

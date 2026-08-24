@@ -3834,6 +3834,31 @@ final class Fragmenter
                 $this->page   = $endPage;
                 $this->cursor = $endCursor;
 
+                // A float takes no room in the flow it sits in. Layout shortens
+                // the line boxes beside it and leaves the box after it where
+                // it was, so the walk has to do the same: the cursor goes back
+                // to where the float's band started and the band contributes
+                // no bottom for the next band to measure from. Left at the
+                // float's bottom, the paragraph beside a float landed BELOW it
+                // by exactly the float's height, but only in a document with a
+                // further page, because a body that fits its page is emitted
+                // whole and never walked here. `ZF-float-then-break.html`:
+                // Chrome 227.25, this 165.90, and 227.50 with the tall block
+                // removed. Only where the float is a float ({@see floatsApplyIn})
+                // and only when it stayed on the page it started on: a float
+                // the fold carried over is already where the cursor has to
+                // follow it. Defect IY.
+                $floatBand = !$sideBySide
+                    && !$ownOffsets
+                    && count($items) === 1
+                    && $items[0]->isFloating()
+                    && $this->floatsApplyIn($n)
+                    && $endPage === $bandPage;
+
+                if ($floatBand) {
+                    $this->cursor = $bandCursor;
+                }
+
                 // ANY item of the band, not the last one. A band that is not a
                 // flex line holds one item, so the two readings only differ on
                 // a flex line, and there Chrome breaks after the WHOLE line
@@ -3864,7 +3889,7 @@ final class Fragmenter
                     $farCursor = $this->cursor;
                 }
 
-                $prevBottom = $relTop + $height;
+                $prevBottom = $floatBand ? $relTop : $relTop + $height;
             }
 
             // The container reaches as far as the furthest of its bands, which
