@@ -541,6 +541,7 @@ class PdfBuilder
             maxFontSize     : $this->limits->maxFontSize,
             timeoutSeconds  : $seconds,
             maxGradientStops: $this->limits->maxGradientStops,
+            maxImageBytes   : $this->limits->maxImageBytes,
         );
 
         return $this;

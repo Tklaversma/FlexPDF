@@ -5267,9 +5267,9 @@ final class HtmlBuilder
             : null;
 
         $image = match (true) {
-            $data !== null     => PdfImage::parse($data),
-            $remote !== null   => PdfImage::parse($remote),
-            $resolved !== null => PdfImage::load($resolved),
+            $data !== null     => PdfImage::parse($data, $this->styles->maxImageBytes()),
+            $remote !== null   => PdfImage::parse($remote, $this->styles->maxImageBytes()),
+            $resolved !== null => PdfImage::load($resolved, $this->styles->maxImageBytes()),
             default            => null,
         };
 
@@ -6575,8 +6575,8 @@ final class HtmlBuilder
         $resolved = $this->resolveAsset($src);
 
         $image = match (true) {
-            $data !== null     => PdfImage::parse($data),
-            $resolved !== null => PdfImage::load($resolved),
+            $data !== null     => PdfImage::parse($data, $this->styles->maxImageBytes()),
+            $resolved !== null => PdfImage::load($resolved, $this->styles->maxImageBytes()),
             default            => null,
         };
 

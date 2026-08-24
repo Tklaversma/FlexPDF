@@ -140,6 +140,30 @@ it('reads the safety limits from config', function () {
         ->and($limits->maxDepth)->toBe(64);
 });
 
+it('drops a raster image whose decoded size passes the ceiling', function () {
+    $canvas = imagecreatetruecolor(2, 2);
+    ob_start();
+    imagepng($canvas);
+    $png  = ob_get_clean();
+    $html = '<img src="data:image/png;base64,' . base64_encode($png) . '">';
+
+    $kept      = Pdf::html($html)->output();
+    $dropped   = Pdf::html($html)->limits(new Limits(maxImageBytes: 8))->output();
+    $unlimited = Pdf::html($html)->limits(new Limits(maxImageBytes: 0))->output();
+
+    expect($kept)->toContain('/Subtype /Image')
+        ->and($unlimited)->toContain('/Subtype /Image')
+        ->and($dropped)->not->toContain('/Subtype /Image')
+        ->and($dropped)->toStartWith('%PDF-');
+});
+
+it('reads the image ceiling from config', function () {
+    config()->set('flexpdf.limits.max_image_bytes', 16);
+
+    expect(Limits::fromArray(config('flexpdf.limits'))->maxImageBytes)->toBe(16)
+        ->and((new Limits())->maxImageBytes)->toBe(200_000_000);
+});
+
 it('enforces the wall clock budget', function () {
     $html = '<div>' . str_repeat('<p>Filler paragraph for pagination.</p>', 400) . '</div>';
 

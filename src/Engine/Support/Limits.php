@@ -36,6 +36,7 @@ final readonly class Limits
          * real document comes near.
          */
         public int $maxGradientStops = 500000,
+        public int $maxImageBytes = 200_000_000,
     ) {}
 
     /** @param array<string, mixed> $config */
@@ -50,6 +51,7 @@ final readonly class Limits
             maxFontSize     : (float) ($config['max_font_size'] ?? $defaults->maxFontSize),
             timeoutSeconds  : (float) ($config['timeout_seconds'] ?? $defaults->timeoutSeconds),
             maxGradientStops: (int) ($config['max_gradient_stops'] ?? $defaults->maxGradientStops),
+            maxImageBytes   : (int) ($config['max_image_bytes'] ?? $defaults->maxImageBytes),
         );
     }
 

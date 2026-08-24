@@ -10,6 +10,13 @@ While the major version is 0, minor releases may change the public API.
 
 ## [0.1.3] - 2026-08-24
 
+### Added
+
+- `limits.max_image_bytes`: a ceiling on the decoded size of a raster image
+  (width x height x 4, read from the header before any decoder runs), for
+  local files, `data:` URIs and fetched remote images alike. Default
+  200,000,000; a picture over it draws as a missing image; 0 disables it.
+
 ### Fixed
 
 - A paragraph beside a float landed below the float, by exactly the float's

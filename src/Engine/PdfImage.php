@@ -100,7 +100,7 @@ final readonly class PdfImage
         );
     }
 
-    public static function load(string $path): ?self
+    public static function load(string $path, int $maxDecodedBytes = 0): ?self
     {
         if (!is_file($path) || !is_readable($path)) {
             return null;
@@ -108,13 +108,26 @@ final readonly class PdfImage
 
         $raw = file_get_contents($path);
 
-        return $raw === false ? null : self::parse($raw);
+        return $raw === false ? null : self::parse($raw, $maxDecodedBytes);
     }
 
-    /** Decode image bytes that never came from a file, such as a `data:` URI. */
-    public static function parse(string $raw): ?self
+    /**
+     * Decode image bytes that never came from a file, such as a `data:` URI.
+     *
+     * `$maxDecodedBytes` is a ceiling on what the picture becomes once it is
+     * decoded, width times height times four, read from the header before any
+     * decoder runs. A few KB of PNG can decode to gigabytes and the GD path
+     * below builds that raster in a PHP string, so the file's own size says
+     * nothing about the cost. Zero is no ceiling. Under a ceiling, a picture
+     * whose header gives no size is refused rather than decoded to find out.
+     */
+    public static function parse(string $raw, int $maxDecodedBytes = 0): ?self
     {
         if ($raw === '') {
+            return null;
+        }
+
+        if ($maxDecodedBytes > 0 && !self::decodesWithin($raw, $maxDecodedBytes)) {
             return null;
         }
 
@@ -127,6 +140,17 @@ final readonly class PdfImage
         }
 
         return self::viaGd($raw);
+    }
+
+    private static function decodesWithin(string $raw, int $ceiling): bool
+    {
+        $size = @getimagesizefromstring($raw);
+
+        if ($size === false || $size[0] <= 0 || $size[1] <= 0) {
+            return false;
+        }
+
+        return $size[0] * $size[1] * 4 <= $ceiling;
     }
 
     // -----------------------------------------------------------------

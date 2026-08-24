@@ -316,6 +316,12 @@ return [
     |                    box per page, so a long document runs out of memory
     |                    painting them. Throws
     |                    GradientLimitExceededException rather than dying.
+    |   max_image_bytes  Largest DECODED size a raster picture may have, width
+    |                    times height times four bytes, read from the header
+    |                    before anything decodes it. A few KB of PNG can
+    |                    decode to gigabytes. A picture over it is dropped and
+    |                    draws as a missing image, the same as a remote one
+    |                    over remote_images.max_bytes. 0 disables the ceiling.
     |
     | The timeout covers layout and pagination. Parsing a hostile font or SVG
     | happens outside those loops and is not yet bounded by it.
@@ -329,6 +335,7 @@ return [
         'max_font_size'      => 2000.0,
         'timeout_seconds'    => 30.0,
         'max_gradient_stops' => 500000,
+        'max_image_bytes'    => 200_000_000,
     ],
 
 ];

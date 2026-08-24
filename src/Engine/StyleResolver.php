@@ -416,6 +416,12 @@ final class StyleResolver
         return $this->limits->maxLength;
     }
 
+    /** The largest decoded size a raster picture may have, in bytes; zero is no ceiling. */
+    public function maxImageBytes(): int
+    {
+        return $this->limits->maxImageBytes;
+    }
+
     public function __construct(?Limits $limits = null, ?RemoteImages $remoteImages = null)
     {
         $this->limits       = $limits ?? new Limits();

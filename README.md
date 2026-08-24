@@ -393,6 +393,7 @@ therefore **security controls, not tuning knobs**:
     'max_font_size'      => 2000.0,
     'timeout_seconds'    => 30.0,
     'max_gradient_stops' => 500000,
+    'max_image_bytes'    => 200_000_000,
 ],
 ```
 
@@ -400,7 +401,11 @@ A render that exceeds them throws a named exception
 (`LayoutTimeoutException`, `PageLimitExceededException`,
 `GradientLimitExceededException`) rather than returning a document quietly
 missing its tail. Override the wall clock per render with
-`->timeout($seconds)`.
+`->timeout($seconds)`. `max_image_bytes` is the one ceiling that drops rather
+than throws: it bounds what a raster picture becomes once decoded (width times
+height times four, read from the header first, so a small file that decodes to
+gigabytes never gets the chance), and a picture over it draws as a missing
+image, the same as a remote one over `remote_images.max_bytes`.
 
 **File access is scoped.** `base_path` is the only directory a document can
 read: `<img src>`, `@font-face src` and stylesheet hrefs resolve against it
